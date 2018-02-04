@@ -2,8 +2,31 @@ YELLOW='\033[1;33m'
 GREEN='\033[1;32m'
 NC='\033[0m'
 
+# My dotfiles
+echo "${YELLOW}Installing my dotfiles...${NC}"
+mkdir -p "$HOME/my-projects"
+git clone https://github.com/gluons/dotfiles.git "$HOME/my-projects/dotfiles"
+echo "source ~/my-projects/dotfiles/.profile" >> ~/.zprofile
+# Dot files on home
+ln -sf "$HOME/my-projects/dotfiles/.editorconfig" "$HOME/.editorconfig"
+ln -sf "$HOME/my-projects/dotfiles/.eslintrc.json" "$HOME/.eslintrc.json"
+## Owner
+CURRENT_USER=$(who | awk '{print $1}') # Real current user while using sudo. See https://unix.stackexchange.com/a/304761/221509
+sudo chown -R $CURRENT_USER: "$HOME/my-projects/dotfiles"
+sudo chown $CURRENT_USER: "$HOME/.zprofile"
+sudo chown -h $CURRENT_USER: "$HOME/.editorconfig"
+sudo chown -h $CURRENT_USER: "$HOME/.eslintrc.json"
+## Permission
+sudo find "$HOME/my-projects/dotfiles" -type f -exec chmod 664 {} +
+sudo find "$HOME/my-projects/dotfiles" -type d -exec chmod 775 {} +
+sudo chmod 664 "$HOME/.zprofile"
+## Change repo remote url
+dotfiles_url='git@github.com:gluons/dotfiles.git'
+su - $CURRENT_USER -c "cd \"$HOME/my-projects/dotfiles\" && git remote set-url origin $dotfiles_url" # Perform as real current user
+cd
+
 # Oh My Zsh
-echo "${YELLOW}Installing Oh My Zsh...${NC}"
+echo "\n${YELLOW}Installing Oh My Zsh...${NC}"
 sudo apt-get install zsh -y -qq --show-progress
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 

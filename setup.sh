@@ -2,23 +2,25 @@ YELLOW='\033[1;33m'
 GREEN='\033[1;32m'
 NC='\033[0m'
 
+cd $HOME
+
+# Real current user while using sudo.
+# See https://unix.stackexchange.com/a/304761/221509
+CURRENT_USER=$(who | awk '{print $1}')
+
 # My dotfiles
 echo "${YELLOW}Installing my dotfiles...${NC}"
 mkdir -p "$HOME/my-projects"
-git clone https://github.com/gluons/dotfiles.git "$HOME/my-projects/dotfiles"
-echo "source ~/my-projects/dotfiles/.profile" >> ~/.zprofile
+su - $CURRENT_USER -c "git clone https://github.com/gluons/dotfiles.git $HOME/my-projects/dotfiles"
+echo "source ~/my-projects/dotfiles/.profile" >> $HOME/.zprofile
 # Dot files on home
 ln -sf "$HOME/my-projects/dotfiles/.editorconfig" "$HOME/.editorconfig"
 ln -sf "$HOME/my-projects/dotfiles/.eslintrc.json" "$HOME/.eslintrc.json"
 ## Owner
-CURRENT_USER=$(who | awk '{print $1}') # Real current user while using sudo. See https://unix.stackexchange.com/a/304761/221509
-sudo chown -R $CURRENT_USER: "$HOME/my-projects/dotfiles"
 sudo chown $CURRENT_USER: "$HOME/.zprofile"
 sudo chown -h $CURRENT_USER: "$HOME/.editorconfig"
 sudo chown -h $CURRENT_USER: "$HOME/.eslintrc.json"
 ## Permission
-sudo find "$HOME/my-projects/dotfiles" -type f -exec chmod 664 {} +
-sudo find "$HOME/my-projects/dotfiles" -type d -exec chmod 775 {} +
 sudo chmod 664 "$HOME/.zprofile"
 ## Change repo remote url
 dotfiles_url='git@github.com:gluons/dotfiles.git'
@@ -28,52 +30,56 @@ cd
 # Oh My Zsh
 echo "\n${YELLOW}Installing Oh My Zsh...${NC}"
 sudo apt-get install zsh -y -qq --show-progress
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+su - $CURRENT_USER -c "git clone git://github.com/robbyrussell/oh-my-zsh.git $HOME/.oh-my-zsh"
+su - $CURRENT_USER -c "cp $HOME/.zshrc $HOME/.zshrc.orig 2>/dev/null || :"
+su - $CURRENT_USER -c "cp $HOME/.oh-my-zsh/templates/zshrc.zsh-template $HOME/.zshrc"
+chsh -s /bin/zsh $CURRENT_USER
 
 # zsh-syntax-highlighting
 echo "\n${YELLOW}Installing zsh-syntax-highlighting...${NC}"
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+su - $CURRENT_USER -c "git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
 
 # zsh-autosuggestions
 echo "\n${YELLOW}Installing zsh-autosuggestions...${NC}"
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+su - $CURRENT_USER -c "git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
 
 # nvm
 echo "\n${YELLOW}Installing nvm...${NC}"
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+su - $CURRENT_USER -c "$(curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh)"
 
 # rbenv
 echo "\n${YELLOW}Installing rbenv...${NC}"
 sudo apt-get install gcc -y -qq
-git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-cd ~/.rbenv && src/configure && make -C src || true
+su - $CURRENT_USER -c "git clone https://github.com/rbenv/rbenv.git $HOME/.rbenv"
+su - $CURRENT_USER -c "cd $HOME/.rbenv && src/configure && make -C src || true"
 cd
-echo '' >> ~/.zshrc
-echo '# rbenv' >> ~/.zshrc
-echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
-echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+echo '' >> $HOME/.zshrc
+echo '# rbenv' >> $HOME/.zshrc
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.zshrc
+echo 'eval "$(rbenv init -)"' >> $HOME/.zshrc
 ## rbenv ruby-build
-mkdir -p "$(~/.rbenv/bin/rbenv root)"/plugins
-git clone https://github.com/rbenv/ruby-build.git "$(~/.rbenv/bin/rbenv root)"/plugins/ruby-build
+su - $CURRENT_USER -c "mkdir -p \"$($HOME/.rbenv/bin/rbenv root)\"/plugins"
+su - $CURRENT_USER -c "git clone https://github.com/rbenv/ruby-build.git \"$($HOME/.rbenv/bin/rbenv root)\"/plugins/ruby-build"
 PATH="$HOME/.rbenv/bin:$PATH" # Temporary set path for rbenv-doctor
-eval "$(rbenv init -)" # Load rbenv shims
+eval "$($HOME/.rbenv/bin/rbenv init -)" # Load rbenv shims
 echo "\n${YELLOW}Running rbenv-doctor...${NC}"
 curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash # Verify rbenv
+sudo find $HOME/.rbenv -maxdepth 1 -type d -exec chown $CURRENT_USER: {} + # Change owner to real current user
 
 # Fonts
 if [ ! -d "$HOME/.local/share/fonts" ]; then
-	mkdir -p ~/.local/share/fonts
+	mkdir -p $HOME/.local/share/fonts
 fi
 ## Fira Mono
 echo "\n${YELLOW}Installing Fira Mono font...${NC}"
 for type in Bold Medium Regular; do
-	wget -q --show-progress --progress=bar -O ~/.local/share/fonts/FiraMono-${type}.ttf \
+	wget -q --show-progress --progress=bar -O $HOME/.local/share/fonts/FiraMono-${type}.ttf \
 	"https://github.com/mozilla/Fira/blob/master/otf/FiraMono-${type}.otf?raw=true";
 done
 ## Fira Code
 echo "\n${YELLOW}Installing Fira Code font...${NC}"
 for type in Bold Light Medium Regular Retina; do
-	wget -q --show-progress --progress=bar -O ~/.local/share/fonts/FiraCode-${type}.ttf \
+	wget -q --show-progress --progress=bar -O $HOME/.local/share/fonts/FiraCode-${type}.ttf \
 	"https://github.com/tonsky/FiraCode/blob/master/distr/ttf/FiraCode-${type}.ttf?raw=true";
 done
 ## Powerline fonts
@@ -98,15 +104,15 @@ fi
 
 # Discord
 echo "\n${YELLOW}Installing Discord...${NC}"
-curl -fL# "https://discordapp.com/api/download?platform=linux&format=deb" -o ~/Downloads/discord.deb
-sudo dpkg -i ~/Downloads/discord.deb
-rm ~/Downloads/discord.deb # Clean up
+curl -fL# "https://discordapp.com/api/download?platform=linux&format=deb" -o $HOME/Downloads/discord.deb
+sudo dpkg -i $HOME/Downloads/discord.deb
+rm $HOME/Downloads/discord.deb # Clean up
 
 # Hyper
 echo "\n${YELLOW}Installing Hyper...${NC}"
-curl -fL# "https://releases.hyper.is/download/deb" -o ~/Downloads/hyper.deb
-sudo dpkg -i ~/Downloads/hyper.deb
-rm ~/Downloads/hyper.deb # Clean up
+curl -fL# "https://releases.hyper.is/download/deb" -o $HOME/Downloads/hyper.deb
+sudo dpkg -i $HOME/Downloads/hyper.deb
+rm $HOME/Downloads/hyper.deb # Clean up
 
 # Spotify
 echo "\n${YELLOW}Installing Spotify...${NC}"

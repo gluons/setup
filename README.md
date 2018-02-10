@@ -8,7 +8,7 @@
 Run
 
 ```shell
-sudo ./setup.sh
+sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/gluons/setup/master/setup.sh)"
 ```
 
 It will install below tools, softwares, etc. in order.

@@ -102,6 +102,11 @@ if [ ! -d "$HOME/Downloads" ]; then
 	mkdir -p "$HOME/Downloads"
 fi
 
+# Yarn
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt-get update && sudo apt-get install yarn
+
 # Discord
 echo "\n${YELLOW}Installing Discord...${NC}"
 curl -fL# "https://discordapp.com/api/download?platform=linux&format=deb" -o $HOME/Downloads/discord.deb

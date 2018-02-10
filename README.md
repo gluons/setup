@@ -23,6 +23,7 @@ It will install below tools, softwares, etc. in order.
 - [Fira Code font](https://github.com/tonsky/FiraCode)
 - [Powerline fonts](https://github.com/powerline/fonts)
 - [Visual Studio Code](https://code.visualstudio.com/)
+- [Yarn](https://yarnpkg.com/)
 - [Discord](https://discordapp.com/)
 - [Hyper](https://hyper.is/)
 - [Spotify](https://www.spotify.com/)

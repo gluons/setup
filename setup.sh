@@ -25,7 +25,7 @@ sudo chmod 664 "$HOME/.zprofile"
 ## Change repo remote url
 dotfiles_url='git@github.com:gluons/dotfiles.git'
 su - $CURRENT_USER -c "cd \"$HOME/my-projects/dotfiles\" && git remote set-url origin $dotfiles_url" # Perform as real current user
-cd
+cd $HOME
 
 # Oh My Zsh
 echo "\n${YELLOW}Installing Oh My Zsh...${NC}"
@@ -68,7 +68,7 @@ sudo find $HOME/.rbenv -maxdepth 1 -type d -exec chown $CURRENT_USER: {} + # Cha
 
 # Fonts
 if [ ! -d "$HOME/.local/share/fonts" ]; then
-	mkdir -p $HOME/.local/share/fonts
+	su - $CURRENT_USER -c "mkdir -p $HOME/.local/share/fonts"
 fi
 ## Fira Mono
 echo "\n${YELLOW}Installing Fira Mono font...${NC}"
@@ -89,6 +89,7 @@ cd powerline-fonts
 ./install.sh
 cd .. && rm -rf powerline-fonts
 fc-cache -f # Clean & rebuild font cache
+sudo chown -R $CURRENT_USER: $HOME/.local/share/fonts # Change owner back to current user
 
 # VS Code
 echo "\n${YELLOW}Installing VS Code...${NC}"

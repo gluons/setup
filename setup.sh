@@ -93,6 +93,11 @@ cd .. && rm -rf powerline-fonts
 fc-cache -f # Clean & rebuild font cache
 sudo chown -R $CURRENT_USER: $HOME/.local/share/fonts # Change owner back to current user
 
+# Yarn
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt-get update && sudo apt-get install yarn -y -q --show-progress
+
 # VS Code
 echo "\n${YELLOW}Installing VS Code...${NC}"
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
@@ -104,11 +109,6 @@ sudo apt-get update && sudo apt-get install code -y -q --show-progress
 if [ ! -d "$HOME/Downloads" ]; then
 	mkdir -p "$HOME/Downloads"
 fi
-
-# Yarn
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-sudo apt-get update && sudo apt-get install yarn
 
 # Discord
 echo "\n${YELLOW}Installing Discord...${NC}"

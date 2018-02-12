@@ -8,9 +8,11 @@ cd $HOME
 # See https://unix.stackexchange.com/a/304761/221509
 CURRENT_USER=$(who | awk '{print $1}')
 
+echo "${YELLOW}Setting up as user \"$CURRENT_USER\".${NC}"
+
 # My dotfiles
 echo "${YELLOW}Installing my dotfiles...${NC}"
-mkdir -p "$HOME/my-projects"
+su - $CURRENT_USER -c "mkdir -p $HOME/my-projects"
 su - $CURRENT_USER -c "git clone https://github.com/gluons/dotfiles.git $HOME/my-projects/dotfiles"
 echo "source ~/my-projects/dotfiles/.profile" >> $HOME/.zprofile
 # Dot files on home

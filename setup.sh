@@ -6,7 +6,7 @@ cd $HOME
 
 # Real current user while using sudo.
 # See https://unix.stackexchange.com/a/304761/221509
-CURRENT_USER=$(who | awk '{print $1}')
+CURRENT_USER=$(who | awk 'NR==1{print $1}')
 
 echo "${YELLOW}Setting up as user \"$CURRENT_USER\".${NC}"
 

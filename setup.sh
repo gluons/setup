@@ -116,12 +116,6 @@ curl -fL# "https://discordapp.com/api/download?platform=linux&format=deb" -o $HO
 sudo dpkg -i $HOME/Downloads/discord.deb
 rm $HOME/Downloads/discord.deb # Clean up
 
-# Hyper
-echo "\n${YELLOW}Installing Hyper...${NC}"
-curl -fL# "https://releases.hyper.is/download/deb" -o $HOME/Downloads/hyper.deb
-sudo dpkg -i $HOME/Downloads/hyper.deb
-rm $HOME/Downloads/hyper.deb # Clean up
-
 # Spotify
 echo "\n${YELLOW}Installing Spotify...${NC}"
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0DF731E45CE24F27EEEB1450EFDC8610341D9410

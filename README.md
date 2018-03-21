@@ -25,5 +25,4 @@ It will install below tools, softwares, etc. in order.
 - [Yarn](https://yarnpkg.com/)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Discord](https://discordapp.com/)
-- [Hyper](https://hyper.is/)
 - [Spotify](https://www.spotify.com/)
